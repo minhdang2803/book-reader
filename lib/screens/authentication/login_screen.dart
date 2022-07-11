@@ -1,4 +1,5 @@
 import 'package:book_reader/providers/theme_provider.dart';
+import 'package:book_reader/utils/responsive.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,33 +11,81 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isVisible = true;
+
   @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              _buildPicture(context),
-              _buildLoginText(context),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-              _buildEmailField(context),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-              _buildPasswordField(context),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
-              _buildOptions(context)
-            ],
+          child: Utils.buildResponsiveWidget(
+        orientation,
+        buildPotrait(context),
+        buildLanscape(context),
+      )),
+    );
+  }
+
+  Widget buildLanscape(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        _buildPicture(context),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildLoginText(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                _buildEmailField(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+                _buildPasswordField(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                _buildOptions(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                _buildLoginButton(context)
+              ],
+            ),
           ),
-        ),
+        )
+      ],
+    );
+  }
+
+  Widget buildPotrait(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+          _buildPicture(context),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+          _buildLoginText(context),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+          _buildEmailField(context),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+          _buildPasswordField(context),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+          _buildOptions(context),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+          _buildLoginButton(context)
+        ],
       ),
     );
   }
 
   Widget _buildPicture(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
     return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
-      child: const Center(
-        child: Image(image: AssetImage('assets/authentication/logo.png')),
+      padding: orientation == Orientation.portrait
+          ? EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05)
+          : EdgeInsets.only(
+              left: 60, bottom: MediaQuery.of(context).size.height * 0.025),
+      child: Center(
+        child: Image(
+            height: orientation == Orientation.portrait
+                ? MediaQuery.of(context).size.height * 0.15
+                : MediaQuery.of(context).size.height * 0.5,
+            image: const AssetImage(
+              'assets/authentication/logo.png',
+            )),
       ),
     );
   }
@@ -140,30 +189,51 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildOptions(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.1),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              TextButton(
-                onPressed: null,
-                child: Text(
-                  'Register',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(color: ThemeProvider.textFieldColor),
-                ),
-              ),
-              TextButton(
-                  onPressed: null,
-                  child: Text(
-                    'Reset pasword',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: ThemeProvider.textFieldColor),
-                  )),
-            ]));
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.1),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          TextButton(
+            onPressed: null,
+            child: Text(
+              'Register',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1!
+                  .copyWith(color: ThemeProvider.textFieldColor),
+            ),
+          ),
+          TextButton(
+              onPressed: null,
+              child: Text(
+                'Reset pasword',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: ThemeProvider.textFieldColor),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.1),
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          primary: ThemeProvider.textFieldColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          // primary: Colors.blue,
+        ),
+        child: Text('Login', style: Theme.of(context).textTheme.headline3),
+      ),
+    );
   }
 }
